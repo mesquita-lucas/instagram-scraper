@@ -46,8 +46,8 @@ instagram-scraper/
 Clone the repository:
 
 ```bash
-git clone https://github.com/mesquita-lucas/insta_scrapper.git
-cd insta_scrapper
+git clone https://github.com/mesquita-lucas/instagram-scraper.git
+cd instagram-scraper
 ```
 
 Create a virtual environment:
