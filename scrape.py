@@ -16,7 +16,6 @@ def main():
         raise ValueError("Informe o nome da página para proceder com a extração.")
 
     page_name = sys.argv[1]
-    print(sys.argv[1], username, password)
 
     session = Session()
 
