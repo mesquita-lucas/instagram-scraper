@@ -29,7 +29,7 @@ def main():
 
     posts = session.scrape(page_name)
 
-    with open(f"posts_{page_name}_url.json", "w", encoding="utf-8") as arquivo:
+    with open(f"posts_from_{page_name}.json", "w", encoding="utf-8") as arquivo:
         json.dump(posts, arquivo, ensure_ascii=False, indent=4)
 
     print(f"\nTotal coletado: {len(posts)}")
