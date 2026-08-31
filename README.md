@@ -90,7 +90,7 @@ The `.env` file should never be committed to Git.
 Run the scraper passing the Instagram profile as an argument:
 
 ```bash
-python scrape.py hub4.bike
+python scrape.py page_name
 ```
 
 The scraper will open Chrome and attempt to authenticate using the credentials configured in `.env`.
