@@ -1,30 +1,25 @@
-import instaloader
-from datetime import datetime, timezone, timedelta
+from session import Session
+import os
+from dotenv import load_dotenv
+import json
 
-L = instaloader.Instaloader()
+def main():
+    session = Session()
+    load_dotenv()
+    
+    session.login(
+        os.getenv("USERNAME"), 
+        os.getenv("PASSWORD")
+    )
 
-profile = instaloader.Profile.from_username(
-    L.context,
-    "hub4.bike"
-)
+    input("Siga o processo de autorização e/ou captcha até que você esteja completamente logado em sua conta. Então, aperte Enter.")
 
-limite = datetime.now(timezone.utc) - timedelta(days=90)
+    posts = session.scrape("hub4.bike")
 
-urls = []
+    with open("posts_url.json", "w", encoding="utf-8") as arquivo:
+        json.dump(posts, arquivo, ensure_ascii=False, indent=4)
 
-for post in profile.get_posts():
-    print(post.caption)
-    print("\n---------------\n")
+    print(f"\nTotal coletado: {len(posts)}")
 
-    post_date = post.date_utc.replace(tzinfo=timezone.utc)
-
-    if post_date < limite:
-        url = (
-            f"https://www.instagram.com/"
-            f"p/{post.shortcode}/"
-        )
-
-        urls.append(url)
-        print(url)
-
-print(f"\nTotal: {len(urls)} URLs")
+if __name__ == "__main__":
+    main()
