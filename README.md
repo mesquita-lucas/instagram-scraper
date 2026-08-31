@@ -39,6 +39,7 @@ instagram-scraper/
 ├── .env.example
 ├── .gitignore
 └── README.md
+```
 
 ## Installation
 
