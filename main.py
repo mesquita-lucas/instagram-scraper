@@ -1,20 +1,32 @@
 from session import Session
-import os
+import os, sys
 from dotenv import load_dotenv
 import json
 
 def main():
-    session = Session()
     load_dotenv()
+
+    username = os.getenv("USERNAME")
+    password = os.getenv("PASSWORD")  
     
+    if not username or not password:
+        raise ValueError("Credenciais não cadastradas.")
+
+    if len(sys.argv) < 2:
+        raise ValueError("Informe o nome da página para proceder com a extração.")
+
+    page_name = sys.argv[1]
+
+    session = Session()
+
     session.login(
-        os.getenv("USERNAME"), 
-        os.getenv("PASSWORD")
+        username, 
+        password
     )
 
     input("Siga o processo de autorização e/ou captcha até que você esteja completamente logado em sua conta. Então, aperte Enter.")
 
-    posts = session.scrape("hub4.bike")
+    posts = session.scrape(page_name)
 
     with open("posts_url.json", "w", encoding="utf-8") as arquivo:
         json.dump(posts, arquivo, ensure_ascii=False, indent=4)
