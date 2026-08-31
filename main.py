@@ -6,8 +6,8 @@ import json
 def main():
     load_dotenv()
 
-    username = os.getenv("USERNAME")
-    password = os.getenv("PASSWORD")  
+    username = os.getenv("INSTAGRAM_USERNAME")
+    password = os.getenv("INSTAGRAM_PASSWORD")  
     
     if not username or not password:
         raise ValueError("Credenciais não cadastradas.")
@@ -16,6 +16,7 @@ def main():
         raise ValueError("Informe o nome da página para proceder com a extração.")
 
     page_name = sys.argv[1]
+    print(sys.argv[1], username, password)
 
     session = Session()
 
@@ -28,7 +29,7 @@ def main():
 
     posts = session.scrape(page_name)
 
-    with open("posts_url.json", "w", encoding="utf-8") as arquivo:
+    with open(f"posts_{page_name}_url.json", "w", encoding="utf-8") as arquivo:
         json.dump(posts, arquivo, ensure_ascii=False, indent=4)
 
     print(f"\nTotal coletado: {len(posts)}")

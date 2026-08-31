@@ -149,10 +149,6 @@ class _Scraper:
 
             url = post["url"]
 
-            if url in visited_urls:
-                print("Loop detectado. Encerrando")
-                break
-
             visited_urls.add(url)
             posts.append(post)
 
