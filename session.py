@@ -5,15 +5,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 
+from models.post import Post
+from collections.abc import Iterator
+from datetime import datetime
+
+
 class Session:
     def __init__(self):
         self.driver = self._configurar_driver()
         self._wait = WebDriverWait(self.driver, 5)
 
-    def scrape(self, page_name: str):
+    def scrape(self, page_name: str) -> Iterator[Post]:
         scraper = _Scraper(self.driver)
 
-        return scraper.scrape(page_name)
+        yield from scraper.scrape(page_name)
 
     def login(self, username, password):
         self.driver.get(
@@ -85,7 +90,7 @@ class _Scraper:
         self._open_profile(page_name)
         self._open_first_post()
 
-        return self._collect_posts()
+        yield from self._collect_posts()
 
     def _open_profile(self, page_name):
         self.driver.get(f"https://instagram.com/{page_name}")
@@ -113,13 +118,16 @@ class _Scraper:
         )
 
         url = self.driver.current_url
-
         datetime_value = time_element.get_attribute("datetime")
 
-        return {
-            "url": url,
-            "datetime": datetime_value
-        }
+        posted_at = datetime.fromisoformat(
+            datetime_value.replace("Z", "+00:00")
+        )
+
+        return Post(
+            url,
+            posted_at
+        )
 
     def _go_to_next_post(self):
         current_url = self.driver.current_url
@@ -139,29 +147,31 @@ class _Scraper:
             EC.url_changes(current_url)
         )
 
-    def _collect_posts(self):
-        posts = []
+    def _collect_posts(self) -> Iterator[Post]:
         visited_urls = set()
+        count = 0
 
         while True:
-
             post = self._get_current_post()
 
-            url = post["url"]
+            url = post.url
+
+            if url in visited_urls:
+                break
 
             visited_urls.add(url)
-            posts.append(post)
+            count += 1
 
             print(
-                f"{len(posts)} | "
-                f"{post['datetime']} | "
-                f"{post['url']}"
+                f"{count} | "
+                f"{post.posted_at} | "
+                f"{post.url}"
             )
+
+            yield post
 
             try:
                 self._go_to_next_post()
             except TimeoutException:
                 print("Os posts acabaram")
                 break
-
-        return posts;
